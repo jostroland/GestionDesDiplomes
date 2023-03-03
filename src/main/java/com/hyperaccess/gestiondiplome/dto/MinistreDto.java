@@ -22,7 +22,6 @@ public record MinistreDto(
         String prenoms,
 
 
-        @NotNull(message =  "La date de prise de fonction ne doit pas est null")
         Instant datePriseFonction) {
 
 

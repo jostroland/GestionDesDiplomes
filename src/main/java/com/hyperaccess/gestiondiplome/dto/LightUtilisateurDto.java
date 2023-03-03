@@ -19,7 +19,7 @@ public record LightUtilisateurDto(
                                   //boolean active,
                                   String motDePasse,
 
-                                  //String photo,
+                                  String photo,
                                   Integer  roleId
 
 ) {
@@ -34,7 +34,7 @@ public record LightUtilisateurDto(
                 .email(utilisateur.getEmail())
                 //.active(utilisateur.getActive())
                 .motDePasse(utilisateur.getMotDePasse())
-                //.photo(utilisateur.getPhoto())
+                .photo(utilisateur.getPhoto())
                 .roleId(utilisateur.getRole().getId())
                 .build();
 
@@ -50,7 +50,7 @@ public record LightUtilisateurDto(
                 .email(lightUtilisateurDto.email())
                 //.active(lightUtilisateurDto.active())
                 .motDePasse(lightUtilisateurDto.motDePasse())
-                //.photo(lightUtilisateurDto.photo())
+                .photo(lightUtilisateurDto.photo())
                 .role(
                         Role.builder()
                                 .id(lightUtilisateurDto.roleId())

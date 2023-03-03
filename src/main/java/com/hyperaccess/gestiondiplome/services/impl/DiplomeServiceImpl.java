@@ -67,8 +67,7 @@ public class DiplomeServiceImpl implements DiplomeService{
         diplome.setMinistre(ministre);
         diplome.setNombreEdition(diplomeDto.nombreEdition());
 
-        String currentDateTime = format.format(diplome.getDateObtention());
-        diplome.setDateObtention(Instant.parse(currentDateTime));
+        diplome.setDateObtention(diplome.getDateObtention());
 
         Diplome diplomeEnreg = diplomeRepository.save(diplome);
 
@@ -91,8 +90,7 @@ public class DiplomeServiceImpl implements DiplomeService{
         diplomeTrouver.setMinistre(ministre);
         diplomeTrouver.setNombreEdition(diplome.getNombreEdition());
 
-        String currentDateTime = format.format(diplome.getDateObtention());
-        diplomeTrouver.setDateObtention(Instant.parse(currentDateTime));
+        diplomeTrouver.setDateObtention(diplome.getDateObtention());
 
         return diplomeRepository.save(diplomeTrouver).getId();
     }

@@ -15,10 +15,11 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "roles")
 public class Role extends AbstractEntity{
 
+    @Column(unique = true)
     private String role;
 
 
-    @OneToOne
-    @JoinColumn(name = "utilisateur_id")
-    private Utilisateur utilisateur;
+    //@OneToOne
+    //@JoinColumn(name = "utilisateur_id")
+    //private Utilisateur utilisateur;
 }

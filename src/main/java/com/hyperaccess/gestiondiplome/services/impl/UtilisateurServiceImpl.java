@@ -37,9 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.requireNonNull;
-
+import static java.util.Objects.*;
 
 
 @Service
@@ -47,7 +45,7 @@ import static java.util.Objects.requireNonNull;
 @Slf4j
 public class UtilisateurServiceImpl implements UtilisateurService {
     private static final String ROLE_USER = "ROLE_USER";
-    public static final String PATH = "/Photos/";
+    public static final String PATH = "src/main/resources/static/photos/";
     private final RoleRepository roleRepository;
 
     private final ObservationRegistry registry;
@@ -135,26 +133,38 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                 findByRole(utilisateurDto.roleId())
         );
 
+
+
+        var utilisateurEnreg = utilisateurRepository.save(utilisateur);
+
         var fileDir = new File(context.getRealPath(PATH));
-        if (!fileDir.exists())
+        if (!fileDir.exists()){
             fileDir.mkdir();
+        }
 
         String filename = file.getOriginalFilename();
-        String newFileName = FilenameUtils.getBaseName(filename)+"."+FilenameUtils.getExtension(filename);
+        //String newFileName = FilenameUtils.getBaseName(filename)+"."+FilenameUtils.getExtension(filename);
+        var id = utilisateurEnreg.getId();
+        var idRole = utilisateurEnreg.getRole().getId();
+        String newFileName = id +"."+FilenameUtils.getExtension(filename);
         File serverFile = new File (context.getRealPath(PATH+File.separator+newFileName));
 
         try {
             FileUtils.writeByteArrayToFile(serverFile,file.getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
-    }
+        }
 
-        utilisateur.setPhoto(newFileName);
-
-        var utilisateurEnreg = utilisateurRepository.save(utilisateur);
+        var utilisateurUpdateDto =
+                LightUtilisateurDto.builder()
+                        .id(id)
+                        .roleId(idRole)
+                        .photo(newFileName)
+                        .build();
+        this.update(id,utilisateurUpdateDto);
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", utilisateurEnreg.getId());
+        claims.put("userId", id);
         claims.put("fullName", utilisateurEnreg.getNom() + " " + utilisateurEnreg.getPrenoms());
         String token = jwtService.generateToken(claims,utilisateurEnreg);
 
@@ -248,8 +258,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             Utilisateur utilisateur = LightUtilisateurDto.toEntity(lightUtilisateurDto);
             Utilisateur utilisateurExistant = UtilisateurDto.toEntity(findById(id));
 
-            utilisateurExistant.setNom(utilisateur.getNom());
-            utilisateurExistant.setPrenoms(utilisateur.getPrenoms());
+           if (!(utilisateur.getNom() == null)) {
+               utilisateurExistant.setNom(utilisateur.getNom());
+           }
+            if (!(utilisateur.getPrenoms() == null)) {
+                utilisateurExistant.setPrenoms(utilisateur.getPrenoms());
+            }
             if (!(utilisateur.getEmail() == null)) {
                 utilisateurExistant.setEmail(utilisateur.getEmail());
             }
@@ -260,15 +274,17 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                 utilisateurExistant.setMotDePasse(passwordEncoder.encode(utilisateur.getMotDePasse()));
             }
 
-           var role = utilisateur.getRole();
-            if (isNull(role.getId())){
-               throw new EntityNotFoundException("Le Role ne doit pas etre null");
+            if (!(utilisateur.getPhoto()==null)) {
+                utilisateurExistant.setPhoto(utilisateur.getPhoto());
+            }
+
+           var idrole = utilisateur.getRole().getId();
+            if (!roleRepository.existsById(idrole)){
+               throw new EntityNotFoundException("Le Role ayant l'ID : "+id+" n'existe pas");
             }
             utilisateurExistant.setRole(
-                    findByRole(role.getId())
+                    findByRole(idrole)
             );
-
-
 
             var utilisateurExistantEnreg = utilisateurRepository.save(utilisateurExistant);
 
@@ -296,9 +312,15 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     private Role findByRole(Integer roleId){
         Role myRole = roleRepository.findById(roleId).orElse(null);
         if (isNull(myRole)) {
-           return roleRepository.save(
+            Role roleParNom = roleRepository.findRoleByRole(ROLE_USER).orElse(null);
+            if (nonNull(roleParNom)){
+                return roleParNom;
+            }
+            var id = roleRepository.save(
                 Role.builder().role(ROLE_USER).build()
-            );
+            ).getId();
+
+            myRole = roleRepository.findById(id).orElseThrow();
         }
         return myRole;
     }

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,13 +55,13 @@ public interface UtilisateurApi {
 
 
 
-    @PostMapping(value = CREATE_UTILISATEUR_PHOTO_ENDPOINT,consumes = {MediaType.MULTIPART_MIXED_VALUE},produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = CREATE_UTILISATEUR_PHOTO_ENDPOINT,consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(description = "Cette methode permet d'enregistrer ou de modifier un utilisateur")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "L'Objet utilisateur créer ou modifier", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Utilisateur.class))}),
             @ApiResponse(responseCode = "400", description = "L'Objet utilisateur n'existe pas")
     })
-    AuthenticationResponse create(@RequestPart("file") MultipartFile file, @RequestBody UtilisateurDto utilisateurDto);
+    AuthenticationResponse create(@RequestParam(value = "file") MultipartFile file,UtilisateurDto utilisateurDto);
 
 
     @GetMapping(value = DESACTIVE_UTILISATEUR_ENDPOINT,produces = MediaType.APPLICATION_JSON_VALUE)

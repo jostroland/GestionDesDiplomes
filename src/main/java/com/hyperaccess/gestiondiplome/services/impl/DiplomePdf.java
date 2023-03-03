@@ -32,9 +32,6 @@ import static java.lang.Math.PI;
 
 public class DiplomePdf {
 
-
-
-
     private PdfDocument pdfDocument;
 
     private Document document;
@@ -68,33 +65,12 @@ public class DiplomePdf {
 
 
         document.add(paragraphBeneficiaire);
-        //addParagraphToGeneratedPDF(document,paragraphBeneficiaire,0,0,0);
-        //addParagraphToGeneratedPDF(document,paragraphMinistre,0,0,0);
-        //addParagraphToGeneratedPDF(document,paragraphNumeroEnreg,0,0,90);
+        document.add(paragraphNumeroEnreg);
+        document.add(paragraphMinistre);
 
         document.close();
         return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
     }
-
-
-
-    public void addParagraphToGeneratedPDF(Document document,
-                                           Paragraph paragraph,
-                                           float xOffset,
-                                           float verticalOffset,
-                                           float rotation) {
-
-        //PdfPage pdfPage = document.getPdfDocument().getPage(pageIndex);
-        PdfPage pdfPage = document.getPdfDocument().getFirstPage();
-
-        PageSize pageSize = (PageSize) pdfPage.getPageSizeWithRotation();
-        float x = (pageSize.getLeft() + pageSize.getRight());
-        float y = (pageSize.getTop() + pageSize.getBottom());
-        float rotationInRadians = (float) (PI / 180 * rotation);
-        document.showTextAligned(paragraph, x - xOffset, y + verticalOffset,
-                0, LEFT, BOTTOM, rotationInRadians);
-    }
-
 
     public Paragraph createParagraph(String paragraph,Integer fontSize) throws IOException {
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);

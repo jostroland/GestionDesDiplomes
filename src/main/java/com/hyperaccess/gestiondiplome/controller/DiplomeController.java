@@ -59,7 +59,6 @@ public class DiplomeController implements DiplomeApi {
     @Override
     public InputStreamResource exportToPdf(String numeroEnreg) throws IOException {
 
-
         DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime( FormatStyle.SHORT )
                 .withLocale(Locale.UK )
                 .withZone( ZoneId.systemDefault() );

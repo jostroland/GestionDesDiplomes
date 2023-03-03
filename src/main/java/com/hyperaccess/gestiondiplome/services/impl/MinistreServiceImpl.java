@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 
 @Service
@@ -80,9 +81,14 @@ public class MinistreServiceImpl implements MinistreService {
         Ministre ministre         =  MinistreDto.toEntity(ministreDto);
         Ministre ministreExistant =  MinistreDto.toEntity(ministreExistantDto);
 
-        ministreExistant.setNom(ministre.getNom());
-        ministreExistant.setPrenoms(ministre.getPrenoms());
-        ministreExistant.setDatePriseFonction(ministre.getDatePriseFonction());
+        if (nonNull(ministre.getNom()))
+            ministreExistant.setNom(ministre.getNom());
+
+        if (nonNull(ministre.getPrenoms()))
+            ministreExistant.setPrenoms(ministre.getPrenoms());
+
+        if (nonNull(ministre.getDatePriseFonction()))
+            ministreExistant.setDatePriseFonction(ministre.getDatePriseFonction());
 
        var ministreExistantEnreg = ministreRepository.save(ministreExistant);
 
